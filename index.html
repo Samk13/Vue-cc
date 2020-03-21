@@ -3,9 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Vue</title>
 </head>
 <body>
-    
+    <div id="app">
+        <template v-if="loaded">
+            {{ message}}
+
+        </template>
+        <template v-if="!loaded">
+            pleasse wait ... 🙄
+        </template>
+        <div>
+            <span v-if="count < 5">{{ count }}is too small</span>
+            <span v-else-if="count < 10 && count > 5" > {{ count }}still smaller then 10</span>
+            <span v-else-if="count < 15 && count >10"> {{ count }}still smaller then 10</span>
+            <span v-else >{{ count}} is  perfect</span>
+        </div>
+        <div>
+            <h1>post title</h1>
+            <h3 v-for="name in names">{{ name }}</h3>
+        </div>
+        <template v-for="data in corona.date ">
+            {{ data }}
+        </template>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        let app = new Vue({
+            el: '#app',
+            data: {
+                loaded: false,
+                message: 'Hello the load is completed! 🤽🏻‍♂️',
+                count: 20,
+                names : ['sam','Linnea','Anas'],
+                corona : []
+            },
+            mounted(){
+                setTimeout( ()=> this.loaded = ! this.loaded ,2000)
+                 
+                setInterval(() =>{this.count = Math.floor(Math.random() * (20 - 1) + 1 )} ,1000)
+                this.corona = fetch("https://pomber.github.io/covid19/timeseries.json")
+                                .then(response => response.json())
+                                .then(data => {
+                                     return data["Sweden"].forEach(({ date, confirmed, recovered, deaths }) =>
+                                     {
+                                        return { date, confirmed, recovered, deaths } = this.corona
+                                         console.log(`${date} active cases: ${confirmed - recovered - deaths}`)
+                                     }
+                                    )
+                                })
+
+            },
+   
+            
+
+        })
+
+    </script>
 </body>
 </html>
